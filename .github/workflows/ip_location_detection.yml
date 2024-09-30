@@ -1,0 +1,39 @@
+name: Run IP Location Detection
+
+on:
+  push:
+    paths:
+      - 'ip.txt'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+          pip install geoip2
+
+      - name: Run IP Location Detection
+        run: |
+          python location_by_anqingsan_Online.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git add addressesapi.txt
+          TIME=$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')
+          git commit -m "Update addressesapi.txt at $TIME"
+          git push
